@@ -107,6 +107,7 @@ public class DoubleSorting {
     * @param a
     *           array to be sorted
     */
+    // Source https://jeffreystedfast.blogspot.com/2007/02/binary-insertion-sort.html  
    public static void binaryInsertionSort(double[] a) {
       if (a.length < 2)
         return;
