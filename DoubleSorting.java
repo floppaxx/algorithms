@@ -108,44 +108,77 @@ public class DoubleSorting {
     *           array to be sorted
     */
     // Source https://jeffreystedfast.blogspot.com/2007/02/binary-insertion-sort.html  
+//    public static void binaryInsertionSort(double[] a) {
+//       if (a.length < 2)
+//         return;
+
+//     for (int i = 1; i < a.length; i++) {
+//         double key = a[i];
+//         int insertionIndex = binarySearch(a, key, 0, i - 1);
+
+//         // Shift elements to make space for the key
+//         System.arraycopy(a, insertionIndex, a, insertionIndex + 1, i - insertionIndex);
+
+//         // Insert the key at its correct position
+//         a[insertionIndex] = key;
+//     }
+// }
+
+// /**
+//  * Binary search to find the insertion point.
+//  *
+//  * @param arr   array in which to search
+//  * @param key   key to be inserted
+//  * @param low   low index of the search range
+//  * @param high  high index of the search range
+//  * @return the index where the key should be inserted
+//  */
+// private static int binarySearch(double[] arr, double key, int low, int high) {
+//     while (low <= high) {
+//         int mid = low + (high - low) / 2;
+
+//         if (arr[mid] == key) {
+//             return mid;
+//         } else if (arr[mid] < key) {
+//             low = mid + 1;
+//         } else {
+//             high = mid - 1;
+//         }
+//     }
+//     return low;
+//    }
+
    public static void binaryInsertionSort(double[] a) {
-      if (a.length < 2)
-        return;
+      if (a.length <= 1) {
+         return;
+      }
 
-    for (int i = 1; i < a.length; i++) {
-        double key = a[i];
-        int insertionIndex = binarySearch(a, key, 0, i - 1);
+      for (int i = 1; i < a.length; i++) {
+         double key = a[i];
+         int left = 0;
+         int right = i - 1;
 
-        // Shift elements to make space for the key
-        System.arraycopy(a, insertionIndex, a, insertionIndex + 1, i - insertionIndex);
+         // Binary search to find the insertion point
+         while (left <= right) {
+            int mid = left + (right - left) / 2;
+            if (a[mid] == key) {
+                  left = mid; // Adjust left to mid if the key is found
+                  break;
+            } else if (a[mid] < key) {
+                  left = mid + 1; // Key is greater, search in the right half
+            } else {
+                  right = mid - 1; // Key is smaller, search in the left half
+            }
+         }
 
-        // Insert the key at its correct position
-        a[insertionIndex] = key;
-    }
-}
+         // Shift elements to the right to make space for the key
+         for (int j = i; j > left; j--) {
+            a[j] = a[j - 1];
+         }
 
-/**
- * Binary search to find the insertion point.
- *
- * @param arr   array in which to search
- * @param key   key to be inserted
- * @param low   low index of the search range
- * @param high  high index of the search range
- * @return the index where the key should be inserted
- */
-private static int binarySearch(double[] arr, double key, int low, int high) {
-    while (low <= high) {
-        int mid = low + (high - low) / 2;
-
-        if (arr[mid] == key) {
-            return mid;
-        } else if (arr[mid] < key) {
-            low = mid + 1;
-        } else {
-            high = mid - 1;
-        }
-    }
-    return low;
+         // Insert the key at the correct position
+         a[left] = key;
+      }
    }
 
    /**
