@@ -1,3 +1,4 @@
+import java.io.Console;
 import java.util.*;
 
 /** Stack manipulation.
@@ -6,7 +7,10 @@ import java.util.*;
 public class DoubleStack {
 
    public static void main(String[] args) {
-     
+      System.out.println("Result for '2. 5. SWAP -': " + interpret("2. 5. SWAP -")); // Expected output: 3.0
+      System.out.println("Result for '3. DUP *': " + interpret("3. DUP *")); // Expected output: 9.0
+      System.out.println("Result for '2. 5. 9. ROT - -': " + interpret("2. 5. 9. ROT - -")); // Expected output: -2.0
+      System.out.println("Result for '-3. -5. -7. ROT - SWAP DUP * +': " + interpret("-3. -5. -7. ROT - SWAP DUP * +")); // Expected output: 21.0
   }
 
    private Stack<Double> stack;
@@ -38,32 +42,94 @@ public class DoubleStack {
      return stack.pop();
    } // pop
 
-   public void op (String s) {
+   public double[] getTwoOperands() {
       if (stack.size() < 2) {
-         throw new RuntimeException("Stack underflow: Insufficient operands for operation " + s);
+          throw new RuntimeException("Stack underflow: Insufficient elements for getting two operands");
+      }
+      double op2 = pop();
+      double op1 = pop();
+      return new double[] {op1, op2};
+  }
+
+  public double[] getThreeOperands() {
+     if (stack.size() < 3) {
+        throw new RuntimeException("Stack underflow: Insufficient elements for getting three operands");
      }
-     double operand2 = pop();
-     double operand1 = pop();
+     double op3 = pop();
+     double op2 = pop();
+     double op1 = pop();
+     return new double[] {op1, op2, op3};
+   }
+
+   public double getOneOperand() {
+      if (stack.size() < 1) {
+          throw new RuntimeException("Stack underflow: Insufficient elements for getting one operand");
+      }
+      return pop();
+   }
+  
+
+   public void op (String s) {
+
      switch (s) {
+         case "SWAP":
+               double[] operands_swap = getTwoOperands();
+               swap( operands_swap[0], operands_swap[1]);
+               break;
+         case "DUP":
+               double operand = getOneOperand();
+               dup(operand);
+               break;
+         case "ROT":
+               double[] operands_rot = getThreeOperands();
+               rot(operands_rot[0], operands_rot[1], operands_rot[2]); 
+               break;
          case "+":
-             push(operand1 + operand2);
+            double[] operands_add = getTwoOperands();
+             push(operands_add[0] + operands_add[1]);
              break;
          case "-":
-             push(operand1 - operand2);
+               double[] operands_sub = getTwoOperands();
+               push(operands_sub[0] - operands_sub[1]);
              break;
          case "*":
-             push(operand1 * operand2);
+               double[] operands_mul = getTwoOperands();
+               push(operands_mul[0] * operands_mul[1]);
              break;
          case "/":
-             if (operand2 == 0) {
+               double[] operands_div = getTwoOperands();
+             if (operands_div[1] == 0) {
                  throw new RuntimeException("Division by zero");
              }
-             push(operand1 / operand2);
+             push(operands_div[0] / operands_div[1]);
              break;
          default:
              throw new RuntimeException("Invalid operation: " + s);
      }
    }
+
+   private void swap(double a, double b) {
+      
+      push(b);
+      push(a);
+   }
+
+   private void rot(double a, double b, double c) {
+      
+      push(b);
+      push(c);
+      push(a);
+   }
+
+   private void dup(double a) {
+      // if (stEmpty()) {
+      //    throw new RuntimeException("Stack underflow: Cannot duplicate from an empty stack");
+      // }
+      push(a);
+      push(a);
+   }
+
+
   
    public double tos() {
       if (stEmpty()) {
@@ -98,29 +164,31 @@ public class DoubleStack {
       return result.toString();
    }
 
-   public static double interpret (String pol) {
+   public static double interpret(String pol) {
       DoubleStack stack = new DoubleStack();
       String[] tokens = pol.split("\\s+");
 
       for (String token : tokens) {
-         token = token.trim();
-         if (token.isEmpty()) {
-               continue; 
-         }
-
-         try {
-               double operand = Double.parseDouble(token);
-               stack.push(operand);
-         } catch (NumberFormatException e) {
-               stack.op(token);
-         }
+          token = token.trim();
+          if (token.isEmpty()) {
+              continue;
+          }
+  
+          try {
+              double operand = Double.parseDouble(token);
+              stack.push(operand);
+          } catch (NumberFormatException e) {
+              stack.op(token);
+          }
       }
-
+  
       if (stack.stEmpty() || stack.stack.size() > 1) {
-         throw new RuntimeException("Invalid expression: Redundant elements on the stack");
+          throw new RuntimeException("Invalid expression: Redundant elements on the stack");
       }
-
+  
       return stack.pop();
-      }
+  }
+  
 
 }
+
