@@ -8,8 +8,7 @@ public class Lfraction implements Comparable<Lfraction> {
 
    /** Main method. Different tests. */
    public static void main (String[] param) {
-      
-      
+   
    }
 
 
@@ -80,10 +79,16 @@ public class Lfraction implements Comparable<Lfraction> {
     */
    @Override
    public boolean equals (Object m) {
-      if (this == m) return true;
-      if (!(m instanceof Lfraction)) return false;
-      Lfraction other = (Lfraction) m;
-      return numerator == other.numerator && denominator == other.denominator; 
+
+      if (compareTo((Lfraction) m) == 0) {
+         return true;
+      } else {
+         return false;
+      }
+      // if (this == m) return true;
+      // if (!(m instanceof Lfraction)) return false;
+      // Lfraction other = (Lfraction) m;
+      //return numerator == other.numerator && denominator == other.denominator; 
    }
 
    /** Hashcode has to be the same for equal fractions and in general, different
@@ -145,6 +150,13 @@ public class Lfraction implements Comparable<Lfraction> {
     * @return this/m
     */
    public Lfraction divideBy (Lfraction m) {
+      try {
+         if (m.numerator == 0) {
+            throw new RuntimeException("Cannot divide by zero: " + m.numerator + "/" + m.denominator);
+         }
+      } catch (RuntimeException e) {
+         throw new RuntimeException("Cannot divide by zero: " + m.numerator + "/" + m.denominator);
+      }
       return times(m.inverse());
    }
 
@@ -232,4 +244,30 @@ public class Lfraction implements Comparable<Lfraction> {
          throw new RuntimeException("Invalid fraction format: " + s);
      }
    }
+
+   public Lfraction pow(int n) {
+      try {
+      if (n == 0) {
+          return new Lfraction(1, 1); // Anything to the power of 0 is 1
+      } else if (n == 1) {
+          return new Lfraction(numerator, denominator); // Anything to the power of 1 is itself
+        } else if (n < 0) {
+           // Negative exponent: take the reciprocal and raise to the positive power
+           if (numerator == 0) {
+              throw new RuntimeException("Cannot compute inverse of zero: " + numerator + "/" + denominator);
+           }
+           return pow(-n).inverse();
+        } else {
+           // Positive exponent: multiply the fraction by itself (n-1) times
+           Lfraction result = new Lfraction(numerator, denominator);
+           for (int i = 1; i < n; i++) {
+              result = result.times(this);
+           }
+           return result;
+        }
+      } catch (RuntimeException e) {
+         throw new RuntimeException("Invalid fraction format: " + numerator + "/" + denominator);
+  }
 }
+}
+
